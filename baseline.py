@@ -1,17 +1,17 @@
 import numpy as np
-import pandas as pd
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import GridSearchCV, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+
+from utils import load_data, save_prediction
 
 
 def main():
     np.random.seed(2)
 
     # Cargamos los datos
-    train = pd.read_csv('data/train.csv')
-    X_test = pd.read_csv('data/test.csv')
+    train, X_test = load_data(split=False)
 
     # Separamos las variables predictoras de la variable objetivo y eliminamos 'song_name'
     X_train = train.drop(['song_id', 'song_popularity', 'song_name'], axis=1)
@@ -47,13 +47,7 @@ def main():
     # Predecimos con los datos de test
     y_pred = model.predict(X_test.drop(['song_id', 'song_name'], axis=1))
 
-    # Guardamos los resultados
-    submission = pd.DataFrame({
-        'song_id': X_test['song_id'],
-        'song_popularity': y_pred
-    })
-
-    submission.to_csv('submissions/baseline_cv10_reproducible.csv', index=False)
+    save_prediction(y_pred, 'baseline_cv10_reproducible.csv')
 
 
 if __name__ == '__main__':

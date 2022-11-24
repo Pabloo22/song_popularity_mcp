@@ -1,9 +1,13 @@
 import pandas as pd
 
 
-def load_data(split: bool = True):
-    train = pd.read_csv('data/train.csv')
+def load_data(split: bool = True, exclude_id: bool = False, no_duplicates: bool = False):
+    train = pd.read_csv('data/train.csv') if not no_duplicates else pd.read_csv('data/train_no_duplicates.csv')
     X_test = pd.read_csv('data/test.csv')
+
+    if exclude_id:
+        train = train.drop('song_id', axis=1)
+        X_test = X_test.drop('song_id', axis=1)
 
     if split:
         X_train = train.drop(['song_popularity'], axis=1)

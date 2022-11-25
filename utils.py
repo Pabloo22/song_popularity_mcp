@@ -2,8 +2,12 @@ import pandas as pd
 
 
 def load_data(split: bool = True, exclude_id: bool = False, no_duplicates: bool = False):
-    train = pd.read_csv('data/train.csv') if not no_duplicates else pd.read_csv('data/train_no_duplicates.csv')
+    train = pd.read_csv('data/train.csv')
     X_test = pd.read_csv('data/test.csv')
+
+    if no_duplicates:
+        # Excluimos 'song_id' a la hora de eliminar duplicados
+        train = train.drop_duplicates(subset=train.drop('song_id', axis=1).columns)
 
     if exclude_id:
         train = train.drop('song_id', axis=1)

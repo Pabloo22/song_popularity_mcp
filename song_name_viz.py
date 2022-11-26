@@ -3,7 +3,6 @@ Este script crea una visualización de la columna 'song_name' en el dataset most
 títulos de las canciones. Para ello, se utiliza la librería WordCloud.
 """
 
-import pandas as pd
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 

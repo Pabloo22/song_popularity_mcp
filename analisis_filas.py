@@ -22,5 +22,16 @@ def main():
     train.to_csv('data/train_no_duplicates.csv', index=False)
 
 
+def print_top_songs():
+    train, _= load_data(exclude_id=True, split=False)
+
+    # Imprimimos las 10 canciones más populares
+    top = train[['song_name', 'song_popularity']].sort_values(by='song_popularity', ascending=False).drop_duplicates()
+    print(top.head(10))
+
+    # Imprimimos las 10 canciones menos populares
+    print(top.tail(10))
+
+
 if __name__ == '__main__':
-    main()
+    print_top_songs()

@@ -1,11 +1,17 @@
 import pandas as pd
 
 
-def load_data(split: bool = True, exclude_id: bool = False, no_duplicates: bool = False):
-    train = pd.read_csv('data/train.csv')
-    X_test = pd.read_csv('data/test.csv')
+def load_data(split: bool = True, exclude_id: bool = False, no_duplicates: bool = False, version: int = 1):
+    if version == 1:
+        train = pd.read_csv('data/train.csv')
+        X_test = pd.read_csv('data/test.csv')
+    elif version == 2:
+        train = pd.read_csv('data/train_v2.csv')
+        X_test = pd.read_csv('data/test_v2.csv')
+    else:
+        raise ValueError('Invalid version')
 
-    if no_duplicates:
+    if no_duplicates and version == 1:
         # Excluimos 'song_id' a la hora de eliminar duplicados
         train = train.drop_duplicates(subset=train.drop('song_id', axis=1).columns)
 

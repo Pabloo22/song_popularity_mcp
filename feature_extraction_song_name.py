@@ -63,7 +63,6 @@ def create_new_features(df):
 
     df['language'] = song_names.swifter.apply(detect_lang)
 
-    # Conseguimos el número de sílabas de cada palabra, pasamos como
     df_aux = df[['song_name', 'language']].copy()
     # Eliminamos el contenido que está dentro de paréntesis, corchetes o '-', puesto que no forma parte del título
     df_aux['song_name_without_parentheses'] = df_aux['song_name'].str.split('\(|\)|\[|\]|-').str[0]

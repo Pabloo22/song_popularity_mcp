@@ -8,14 +8,10 @@ número de palabras que empiezan por mayúscula (num_uppercase_words) y
 por minúscula (num_lowercase_words). Además, realizaremos un análisis de sentimiento y
 una detección del idioma.
 """
-import pandas as pd
+import langdetect
 import numpy as np
 import pyphen
 import textblob
-import langdetect
-import swifter
-from tqdm import tqdm
-
 
 from utils import load_data
 

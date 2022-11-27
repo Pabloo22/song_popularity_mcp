@@ -49,7 +49,7 @@ from pandas_profiling import ProfileReport
 from utils import load_data
 
 
-def preprocess_phase1(df):
+def preprocess_phase1(df, minimalist=False):
     # Eliminamos song_name
     df = df.drop(columns=['song_name'])
 
@@ -60,11 +60,12 @@ def preprocess_phase1(df):
     df['num_syllables_missing'] = df['num_syllables'].isnull().astype(int)
     df['num_syllables'] = df['num_syllables'].fillna(df['num_syllables'].mean())
 
-    # Redondeamos la polaridad a -1 o 1, si es cero se deja igual
-    neg = df['sentiment'] < 0
-    pos = df['sentiment'] > 0
-    df.loc[neg, 'sentiment'] = -1
-    df.loc[pos, 'sentiment'] = 1
+    if not minimalist:
+        # Redondeamos la polaridad a -1 o 1, si es cero se deja igual
+        neg = df['sentiment'] < 0
+        pos = df['sentiment'] > 0
+        df.loc[neg, 'sentiment'] = -1
+        df.loc[pos, 'sentiment'] = 1
 
     # Codificamos la columna time_signature
     df['time_signature'] = (df['time_signature'] == 4).astype(int)
@@ -133,5 +134,21 @@ def main():
     profile.to_file('reports/train_preprocessed_report.html')
 
 
+def preprocessing_v2():
+    """
+    Este preprocesado está pensado para algoritmos que no realizan ninguna suposición sobre las distribuciones de
+    las variables independientes. La idea es realizar un preprocesado que simplemente añada las características
+    extraídas a partir del nombre de la canción y rellene los valores nulos generados.
+    """
+
+    train, X_test = load_data(split=False, version=2)
+    train = preprocess_phase1(train, minimalist=True)
+    X_test = preprocess_phase1(X_test, minimalist=True)
+
+    # Guardamos los datos preprocesados
+    train.to_csv('data/train_preprocessed_v2.csv', index=False)
+    X_test.to_csv('data/test_preprocessed_v2.csv', index=False)
+
+
 if __name__ == '__main__':
-    main()
+    preprocessing_v2()

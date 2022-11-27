@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
@@ -7,10 +8,15 @@ from sklearn.ensemble import RandomForestRegressor
 from utils import load_data, save_prediction, print_grid_results
 
 
-def main():
+def main(add_only_contains_feat=False):
     np.random.seed(2)
 
     X_train, y_train, X_test = load_data(split=True, version=2, exclude_id=True, preprocessed=True)
+
+    if add_only_contains_feat:
+        old_X_train, _, old_X_test = load_data(split=True, version=1, exclude_id=True)
+        X_train = pd.concat([X_train['contains_feat'], old_X_train], axis=1)
+        X_test = pd.concat([X_test['contains_feat'], old_X_test], axis=1)
 
     cv = KFold(n_splits=10, shuffle=True)
 
@@ -37,4 +43,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(True)

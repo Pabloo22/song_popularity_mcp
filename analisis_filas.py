@@ -33,5 +33,13 @@ def print_top_songs():
     print(top.tail(10))
 
 
+def analysis_train_test():
+    X_train, _, X_test = load_data(exclude_id=True, split=True, version=1, no_duplicates=True)
+    print(X_test.columns == X_train.columns)
+
+    # Comprobamos si hay filas idénticas en train y test
+    print('Número de filas idénticas en train y test: ', X_train[X_train.isin(X_test)].dropna().shape[0])
+
+
 if __name__ == '__main__':
-    print_top_songs()
+    analysis_train_test()

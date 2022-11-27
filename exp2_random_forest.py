@@ -30,7 +30,7 @@ def main():
         'sklearn.ensemble.RandomForestRegressor': parameters
     }
     pipeline_optimizer = TPOTRegressor(generations=10,
-                                       population_size=16,
+                                       population_size=12,
                                        cv=cv,
                                        scoring='r2',
                                        verbosity=2,
@@ -46,7 +46,7 @@ def main():
     y_pred = pipeline_optimizer.predict(X_test)
 
     # Guardamos las predicciones
-    save_prediction(y_pred, 'exp2_random_forest_v2.csv')
+    save_prediction(y_pred, 'exp2_random_forest_v3.csv')
 
 
 if __name__ == '__main__':

@@ -149,6 +149,13 @@ def preprocessing_v2():
     train.to_csv('data/train_preprocessed_v2.csv', index=False)
     X_test.to_csv('data/test_preprocessed_v2.csv', index=False)
 
+    # Creamos un report nuevo para comprobar que los cambios se han realizado correctamente
+    profile = ProfileReport(train,
+                            title='train_preprocessed_v2 report',
+                            html={'style': {'full_width': True}},
+                            minimal=True)
+    profile.to_file('reports/train_preprocessed_v2_report.html')
+
 
 if __name__ == '__main__':
     preprocessing_v2()

@@ -6,11 +6,18 @@ def load_data(split: bool = True,
               no_duplicates: bool = False,
               version: int = 1,
               preprocessed: bool = False,
-              feature_selection: bool = False):
+              feature_selection: bool = False,
+              minimalist: bool = False):
 
     if preprocessed:
-        train = pd.read_csv('data/train_preprocessed.csv')
-        X_test = pd.read_csv('data/test_preprocessed.csv')
+        if version == 1:
+            train = pd.read_csv('data/train_preprocessed.csv')
+            X_test = pd.read_csv('data/test_preprocessed.csv')
+        elif version == 2:
+            train = pd.read_csv('data/train_preprocessed_v2.csv')
+            X_test = pd.read_csv('data/test_preprocessed_v2.csv')
+        else:
+            raise ValueError('Version no válida')
     elif version == 1:
         train = pd.read_csv('data/train.csv')
         X_test = pd.read_csv('data/test.csv')
@@ -42,7 +49,6 @@ def load_data(split: bool = True,
         X_train = train.drop(['song_popularity'], axis=1)
         y_train = train['song_popularity']
         return X_train, y_train, X_test
-
 
     return train, X_test
 

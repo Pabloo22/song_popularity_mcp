@@ -10,7 +10,7 @@ from utils import load_data
 
 def main():
     # Cargamos los datos
-    train, _= load_data(exclude_id=True, split=False)
+    train, _ = load_data(exclude_id=True, split=False)
 
     # Comprobamos si hay filas duplicadas excluyendo el id de la canción 'song_id'
     print('Número de filas duplicadas: ', train.duplicated().sum())
@@ -23,7 +23,7 @@ def main():
 
 
 def print_top_songs():
-    train, _= load_data(exclude_id=True, split=False)
+    train, _ = load_data(exclude_id=True, split=False)
 
     # Imprimimos las 10 canciones más populares
     top = train[['song_name', 'song_popularity']].sort_values(by='song_popularity', ascending=False).drop_duplicates()

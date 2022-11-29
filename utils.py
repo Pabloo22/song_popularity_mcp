@@ -1,31 +1,45 @@
 import pandas as pd
 
 
+def _get_filename(agg):
+    if agg == 0:
+        filename = 'train'
+    elif agg == 1:
+        filename = 'train_agg'
+    elif agg == 2:
+        filename = 'train_agg2'
+    else:
+        raise ValueError('agg no válido')
+
+    return filename
+
+
 def load_data(split: bool = True,
               exclude_id: bool = False,
               no_duplicates: bool = False,
               version: int = 1,
               preprocessed: bool = False,
               feature_selection: bool = False,
-              agg: bool = False):
-
+              agg: int = 0):
+    filename = _get_filename(agg)
     if preprocessed:
         if version == 1:
-            train = pd.read_csv('data/train_preprocessed.csv')
+            train = pd.read_csv(f'data/{filename}_preprocessed.csv')
             X_test = pd.read_csv('data/test_preprocessed.csv')
         elif version == 2:
-            train = pd.read_csv('data/train_preprocessed_v2.csv')
+            train = pd.read_csv(f'data/{filename}_preprocessed_v2.csv')
             X_test = pd.read_csv('data/test_preprocessed_v2.csv')
         else:
             raise ValueError('Version no válida')
     elif version == 1:
-        train = pd.read_csv('data/train.csv') if not agg else pd.read_csv('data/train_agg.csv')
+        train = pd.read_csv(f'data/{filename}.csv')
         X_test = pd.read_csv('data/test.csv')
     elif version == 2:
-        train = pd.read_csv('data/train_v2.csv') if not agg else pd.read_csv('data/train_agg_v2.csv')
+        filename = _get_filename(agg)
+        train = pd.read_csv(f'data/{filename}_v2.csv')
         X_test = pd.read_csv('data/test_v2.csv')
     elif version == 3:
-        train = pd.read_csv('data/train_v3.csv')
+        train = pd.read_csv(f'data/{filename}_v3.csv')
         X_test = pd.read_csv('data/test_v3.csv')
     else:
         raise ValueError('Invalid version')
@@ -71,7 +85,7 @@ def save_prediction(y_pred, filename: str, memorize: bool = False):
 
     if memorize:
         # Cambiamos las predicciones que ya están en el dataset de entrenamiento porque coincide el 'song_name'
-        train_agg = pd.read_csv('data/train_agg.csv')
+        train_agg = pd.read_csv('data/memorize_dataset.csv')
         for song_name, popularity in zip(train_agg['song_name'], train_agg['song_popularity']):
             submission.loc[submission['song_name'] == song_name, 'song_popularity'] = popularity
 
@@ -81,8 +95,17 @@ def save_prediction(y_pred, filename: str, memorize: bool = False):
     submission.to_csv('predicciones/' + filename, index=False)
 
 
-def get_feature_importaces(X_train, clf):
-    # Creamos el Dataframe
-    feature_importances = pd.DataFrame(clf.feature_importances_,
-                                        index=X_train.columns,
-                                        columns=['importance']).sort_values('importance', ascending=False)
+def update_submission_with_memorize(filename: str):
+    _, X_test = load_data(split=False)
+    submission = pd.read_csv(f'predicciones/{filename}.csv')
+    # Submission contiene una columna 'song_id' y otra 'song_popularity', por eso es necesario hacer un merge
+    # con el dataset de test para obtener la columna 'song_name'
+    submission = submission.merge(X_test[['song_id', 'song_name']], on='song_id', how='left')
+
+    train_agg = pd.read_csv('data/memorize_dataset.csv')
+    for song_name, popularity in zip(train_agg['song_name'], train_agg['song_popularity']):
+        submission.loc[submission['song_name'] == song_name, 'song_popularity'] = popularity
+
+    submission = submission.drop('song_name', axis=1)
+
+    submission.to_csv(f'predicciones/{filename}_updated.csv', index=False)

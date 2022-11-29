@@ -11,10 +11,10 @@ def main():
     np.random.seed(2)
 
     # Cargamos los datos
-    train, X_test = load_data(split=False)
+    train, X_test = load_data(split=False, agg=2, exclude_id=True)
 
     # Separamos las variables predictoras de la variable objetivo y eliminamos 'song_name'
-    X_train = train.drop(['song_id', 'song_popularity', 'song_name'], axis=1)
+    X_train = train.drop(['song_popularity', 'song_name'], axis=1)
     y_train = train['song_popularity']
 
     # Creamos el pipeline
@@ -45,7 +45,7 @@ def main():
     model.fit(X_train, y_train)
 
     # Predecimos con los datos de test
-    y_pred = model.predict(X_test.drop(['song_id', 'song_name'], axis=1))
+    y_pred = model.predict(X_test.drop(['song_name'], axis=1))
 
     save_prediction(y_pred, 'baseline_memorize.csv', memorize=True)
 

@@ -7,7 +7,7 @@ def load_data(split: bool = True,
               version: int = 1,
               preprocessed: bool = False,
               feature_selection: bool = False,
-              minimalist: bool = False):
+              agg: bool = False):
 
     if preprocessed:
         if version == 1:
@@ -19,10 +19,10 @@ def load_data(split: bool = True,
         else:
             raise ValueError('Version no válida')
     elif version == 1:
-        train = pd.read_csv('data/train.csv')
+        train = pd.read_csv('data/train.csv') if not agg else pd.read_csv('data/train_agg.csv')
         X_test = pd.read_csv('data/test.csv')
     elif version == 2:
-        train = pd.read_csv('data/train_v2.csv')
+        train = pd.read_csv('data/train_v2.csv') if not agg else pd.read_csv('data/train_agg_v2.csv')
         X_test = pd.read_csv('data/test_v2.csv')
     elif version == 3:
         train = pd.read_csv('data/train_v3.csv')
@@ -42,8 +42,8 @@ def load_data(split: bool = True,
         train = train.drop_duplicates(subset=train.drop('song_id', axis=1).columns)
 
     if exclude_id and not feature_selection:
-        train = train.drop('song_id', axis=1)
-        X_test = X_test.drop('song_id', axis=1)
+        train = train.drop('song_id', axis=1, errors='ignore')
+        X_test = X_test.drop('song_id', axis=1, errors='ignore')
 
     if split:
         X_train = train.drop(['song_popularity'], axis=1)
@@ -60,11 +60,29 @@ def print_grid_results(grid):
     print(grid.best_estimator_)
 
 
-
-def save_prediction(y_pred, filename: str):
+def save_prediction(y_pred, filename: str, memorize: bool = False):
     X_test = pd.read_csv('data/test.csv')
+
     submission = pd.DataFrame({
         'song_id': X_test['song_id'],
-        'song_popularity': y_pred
+        'song_popularity': y_pred,
+        'song_name': X_test['song_name']
     })
+
+    if memorize:
+        # Cambiamos las predicciones que ya están en el dataset de entrenamiento porque coincide el 'song_name'
+        train_agg = pd.read_csv('data/train_agg.csv')
+        for song_name, popularity in zip(train_agg['song_name'], train_agg['song_popularity']):
+            submission.loc[submission['song_name'] == song_name, 'song_popularity'] = popularity
+
+        # Eliminamos la columna 'song_name'
+        submission = submission.drop('song_name', axis=1)
+
     submission.to_csv('predicciones/' + filename, index=False)
+
+
+def get_feature_importaces(X_train, clf):
+    # Creamos el Dataframe
+    feature_importances = pd.DataFrame(clf.feature_importances_,
+                                        index=X_train.columns,
+                                        columns=['importance']).sort_values('importance', ascending=False)

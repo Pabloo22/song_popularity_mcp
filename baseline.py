@@ -47,7 +47,7 @@ def main():
     # Predecimos con los datos de test
     y_pred = model.predict(X_test.drop(['song_id', 'song_name'], axis=1))
 
-    save_prediction(y_pred, 'baseline_cv10_reproducible.csv')
+    save_prediction(y_pred, 'baseline_memorize.csv', memorize=True)
 
 
 if __name__ == '__main__':

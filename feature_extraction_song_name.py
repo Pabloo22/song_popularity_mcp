@@ -13,6 +13,7 @@ import numpy as np
 import pyphen
 import textblob
 from pandas_profiling import ProfileReport
+import swifter
 
 from utils import load_data
 
@@ -80,10 +81,10 @@ def main():
     train, X_test = load_data(split=False, agg=2)
 
     train = create_new_features(train)
-    # X_test = create_new_features(X_test)
+    X_test = create_new_features(X_test)
 
     train.to_csv('data/train_agg2_v2.csv', index=False)
-    # X_test.to_csv('data/test_v2.csv', index=False)
+    X_test.to_csv('data/test_v2.csv', index=False)
 
     profile = ProfileReport(train, title='train_agg2_v2 Report', html={'style': {'full_width': True}}, minimal=True)
     profile.to_file('reports/train_agg2_v2.html')

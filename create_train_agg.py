@@ -9,12 +9,9 @@ def create_train_agg():
 
     # Agrupamos por 'song_name' y agregamos por la media en todas las columnas menos en 'key
     train_agg: pd.DataFrame = train.groupby('song_name').mean()
-    # Guardamos el dataset sin filas duplicadas
+    # Guardamos el dataset
     train_agg.to_csv('data/train_agg.csv', index=True)
     train_agg.reset_index(inplace=True)
-
-    # Guardamos el dataset
-    train_agg.to_csv('data/train_agg.csv', index=False)
 
     # Generamos el reporte de pandas profiling
     profile = ProfileReport(train_agg,

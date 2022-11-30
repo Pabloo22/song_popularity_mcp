@@ -35,6 +35,7 @@ def preprocess_phase1(df, minimalist=False, updated=False):
 
 
 def preprocess(train, test, updated=False):
+    # Nota: la versión updated no ha sido utilizada finalmente
     train = preprocess_phase1(train, updated=updated)
     test = preprocess_phase1(test, updated=updated)
 

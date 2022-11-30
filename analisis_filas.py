@@ -2,9 +2,6 @@
 En este script se comprueba si hay filas duplicadas en el dataset. Para ello, se utiliza la
 función duplicated() de pandas.
 """
-
-import pandas as pd
-
 from utils import load_data
 
 
